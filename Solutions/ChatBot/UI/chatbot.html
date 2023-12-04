@@ -1,0 +1,201 @@
+<html class="h-full bg-white">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <style>.message {
+            position: relative;
+          }
+          
+          .message:after {
+            content: "";
+            top: 0;
+            position: absolute;
+            border: 0.75em solid transparent;
+            border-top-color: blue;
+            display: block;
+          }
+          
+          .message.assistant:after {
+            left: -0.45em;
+            border-top-color: inherit;
+          }
+          
+          .message.user:after {
+            right: -0.45em;
+            border-top-color: inherit;
+          }
+          
+          .type-indicator span {
+            display: inline-block;
+            padding: 0 0.075em;
+            animation: type-indicator 1s ease-in-out infinite;
+            transform: translateY(0);
+          }
+          
+          .type-indicator span:nth-child(2) {
+            animation-delay: 150ms;
+          }
+          
+          .type-indicator span:nth-child(3) {
+            animation-delay: 300ms;
+          }
+          
+          @keyframes type-indicator {
+            0% {
+              transform: none;
+              animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+            }
+            50% {
+              transform: translateY(-25%);
+              animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+            }
+          }
+          
+          .blink {
+            animation: blink 1.25s infinite;
+          }
+          
+          @keyframes blink {
+            0% {
+              opacity: 1;
+            }
+            69% {
+              opacity: 1;
+            }
+            70% {
+              opacity: 0;
+            }
+            100% {
+              opacity: 0;
+            }
+          }
+          </style>
+        <script>
+            tailwind.config = {
+              theme: {
+                extend: {
+                  colors: {
+                    clifford: '#da373d',
+                  }
+                }
+              }
+            }
+          </script>
+         
+    </head>
+    <body class="h-full">
+        <div class="w-screen h-screen bg-gray-50 flex flex-col" x-data="chat">
+
+            <div class="bg-gray-800 flex justify-center p-4">
+              <span class="text-white text-bold">World of Workflows Copilot</span>
+            </div>
+          
+            <div class="w-full max-w-screen-lg flex-1 m-auto p-8 my-4 pb-20">
+              <div class="flex flex-col">
+          
+                <template x-for="message in messages">
+                  <div class="message rounded-lg py-2 px-6 mb-4" :class="message.role === 'assistant' ? 'assistant bg-blue-100 border-blue-100 self-start' : 'user bg-green-200 border-green-200 self-end'">
+                    <span x-text="message.content"></span>
+                    <template x-if="message.beingTyped">
+                      <span class="w-2.5 bg-gray-600 h-4 inline-block -mb-0.5 align-baseline blink"></span>
+                    </template>
+                  </div>
+                </template>
+          
+                <template x-if="showTyping">
+                  <div class="message assistant rounded-lg py-2.5 px-6 mb-4 bg-blue-100 border-blue-100 self-start">
+                    <div class="type-indicator">
+                      <span>.</span><span>.</span><span>.</span>
+                    </div>
+                  </div>
+                </template>
+          
+              </div>
+          
+            </div>
+            <div class="fixed inset-x-0 bottom-0 bg-gray-200">
+              <form class="max-w-screen-lg m-auto w-full p-4 flex space-x-4 justify-center items-center" @submit.prevent="sendMessage">
+                <input id="message" type="text" autocomplete="off" class="border rounded-md p-2 flex-1 border-gray-300" x-model="newMessage" placeholder="Your message..." />
+                <button class="bg-gray-800 text-white px-4 py-2 rounded-md" :class="{'opacity-50' : waitingOnResponse}">Send</button>
+              </form>
+            </div>
+          </div>
+   
+        </body>       
+        <script>
+           
+
+//Demo variables
+const mockTypingAfter = 1500;
+const mockResponseAfter = 3000;
+const mockOpeningMessage =
+  "Hello there. I am World of Workflows Copilot. Ask me anything about World of Workflows and I will attempt to help you!.";
+const mockResponsePrefix = "Thanks for sending me: ";
+
+document.addEventListener("alpine:init", () => {
+  Alpine.data("chat", () => ({
+    newMessage: "",
+    showTyping: false,
+    waitingOnResponse: true,
+    messages: [],
+    init() {
+      this.mockResponse(mockOpeningMessage);
+    },
+    sendMessage() {
+      if (this.waitingOnResponse) return;
+      this.waitingOnResponse = true;
+      this.messages.push({ role: "user", content: this.newMessage });
+      this.newMessage = "";
+      window.scrollTo(0, 0); //To fix weird iOS zoom on input
+      this.mockResponse(this.newMessage);
+    },
+    typeOutResponse(message) {
+      this.messages.push({ role: "assistant", content: "", beingTyped: true });
+      let responseMessage = this.messages[this.messages.length - 1];
+      let i = 0;
+      let interval = setInterval(() => {
+        responseMessage.content += message.charAt(i);
+        i++;
+        if (i > message.length - 1) {
+          this.waitingOnResponse = false;
+          delete responseMessage.beingTyped;
+          clearInterval(interval);
+        }
+      }, 30);
+    },
+    mockResponse(message) {
+  setTimeout(() => {
+    this.showTyping = true;
+  }, mockTypingAfter);
+
+  // Fetch the response from the given URL
+  fetch("https://localhost:7063/getresponse", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ query: this.messages })
+  })
+  .then(response => response.json())
+  .then(data => {
+    this.showTyping = false;
+
+    // Using the response from the API
+    let responseMessage = data.response;
+    this.typeOutResponse(responseMessage);
+  })
+  .catch(error => {
+    console.error("Error fetching data:", error);
+    this.showTyping = false;
+    this.typeOutResponse("Sorry, an error occurred. Please try again.");
+  });
+}
+
+  }));
+});
+
+Alpine.start();
+
+          </script></html>

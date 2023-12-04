@@ -47,7 +47,7 @@ This Hackathon is all about using **World of Workflows** to solve real-world bus
 ## 3. Understanding Your Roles
    - **Hacker:** 
      - **Objective:** Develop a working prototype.
-     - **Action:** Learn new technologies, collaborate with the Hipster for design integration, and work with the Hustler for feature prioritisation.
+     - **Action:** Learn new technologies, collaborate with the Hipster for design integration, and work with the Hustler for feature prioritization.
    - **Hustler:** 
      - **Objective:** Define the project scope and keep the team on track.
      - **Action:** Conduct market research, define the project's value proposition, and prepare the pitch.
