@@ -76,7 +76,13 @@ This Hackathon is all about using **World of Workflows** to solve real-world bus
 By understanding and embracing these roles and steps, you'll be well-equipped to participate effectively in a hackathon and potentially bring innovative ideas to fruition.
 
 # What you get
-As this hackathon is only 90 minutes long, we have crated five starter projects to get you going. These are:
+As this hackathon is only 90 minutes long, we have created five starter projects to get you going. These are:
+
+- **[CRM](./Solutions/CRM/README.md)** - A Simple Customer Relationship Management System with a focus on the Sales process, taking leads through to opportunities.
+- **[ERP](./Solutions/ERP/README.md)** - A Simple Eneterprise Resource Planning System with a focus on financial management
+- **[Helpdesk](./Solutions/Helpdesk/README.md)** - A Multi-Tier AI Enabled Helpdesk Solution. *Bring your own Open AI Keys*
+- **[Registration](./Solutions/Registration/)** - A Registration system for events.
+- **[ChatBot](./Solutions/ChatBot/README.md)** - Your Very Own ChatGPT-Based Chatbot
 
 
 You can choose to start from scratch or work with one of the starter solutions or build your own from scratch!
