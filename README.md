@@ -79,7 +79,6 @@ By understanding and embracing these roles and steps, you'll be well-equipped to
 As this hackathon is only 90 minutes long, we have created five starter projects to get you going. These are:
 
 - **[CRM](./Solutions/CRM/README.md)** - A Simple Customer Relationship Management System with a focus on the Sales process, taking leads through to opportunities.
-- **[ERP](./Solutions/ERP/README.md)** - A Simple Eneterprise Resource Planning System with a focus on financial management
 - **[Helpdesk](./Solutions/Helpdesk/README.md)** - A Multi-Tier AI Enabled Helpdesk Solution. *Bring your own Open AI Keys*
 - **[Registration](./Solutions/Registration/)** - A Registration system for events.
 - **[ChatBot](./Solutions/ChatBot/README.md)** - Your Very Own ChatGPT-Based Chatbot
